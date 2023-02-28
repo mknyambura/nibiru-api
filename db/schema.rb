@@ -10,33 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_28_190757) do
-    create_table "boards", force: :cascade do |t|
-        t.string "name"
-        t.datetime "created_at", null: false
-        t.datetime "updated_at", null: false
-        t.integer "project_id"
-        t.index ["project_id"], name: "index_boards_on_project_id"
-    end
-    
-    create_table "projects", force: :cascade do |t|
-        t.string "title"
-        t.datetime "created_at", null: false
-        t.datetime "updated_at", null: false
-        t.boolean "favorite"
-        t.string "color"
-    end
-    
-    create_table "tasks", force: :cascade do |t|
-        t.string "name"
-        t.date "due_date"
-        t.text "description"
-        t.string "status"
-        t.string "priority"
-        t.boolean "completed"
-        t.integer "board_id"
-        t.datetime "created_at", null: false
-        t.datetime "updated_at", null: false
-        t.index ["board_id"], name: "index_tasks_on_board_id"
-    end
+ActiveRecord::Schema.define(version: 2023_02_28_200936) do
+
+  create_table "boards", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "project_id"
+    t.index ["project_id"], name: "index_boards_on_project_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "color"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "name"
+    t.date "due_date"
+    t.text "description"
+    t.string "status"
+    t.string "priority"
+    t.boolean "completed"
+    t.integer "board_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["board_id"], name: "index_tasks_on_board_id"
+  end
+
 end

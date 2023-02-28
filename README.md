@@ -71,7 +71,7 @@ Shows you projects and all of the tasks associated with the project
 
 ```js
 
-fetch('http://localhost:9393/projects')
+fetch('http://localhost:9292/projects')
   .then((res) => res.json())
   .then((data) => data.projects)
 
