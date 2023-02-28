@@ -1,138 +1,313 @@
-# Phase 3 Project Guidelines
+# Nibiru Phase 3 Project
 
-## Learning Goals
+This project management API is a simple web API where you make CRUD calls to a server to organize a project management app.
 
-- Build a web basic API with Sinatra and Active Record to support a React
-  frontend
+<!-- [demo here](https://mercury-task-management-app.herokuapp.com/) -->
 
-## Introduction
+## Front-end Project Task Management Interface
 
-Congrats on getting through all the material for Phase 3! Now's the time to put
-it all together and build something from scratch to reinforce what you know and
-expand your horizons.
+You can use this API in conjunction with my front-end project management app [see the repo](https://github.com/mknyambura/nibiru-client)
 
-The focus of this project is **building a Sinatra API backend** that uses
-**Active Record** to access and persist data in a database, which will be used
-by a separate **React frontend** that interacts with the database via the API.
+## Technologies Used in API
 
-## Requirements
+- Ruby
+- ActiveRecord
+- SQLite3
+- Rack
 
-For this project, you must:
+## How To Use
 
-- Use Active Record to interact with a database.
-- Have at least two models with a one-to-many relationship.
-- At a minimum, set up the following API routes in Sinatra:
-  - create and read actions for both models
-  - full CRUD capability for one of the models: 
-  The update action should be implemented using a form that is 
-  pre-filled with existing values for the object. On submission of 
-  the form, the object should update. Note: Using a like button or 
-  similar will not meet the update requirement.
-- Build a separate React frontend application that interacts with the API to
-  perform CRUD actions.
-- Implement proper front end state management. You should be updating state using a
-  setState function after receiving your response from a POST, PATCH, or DELETE 
-  request. You should NOT be relying on a GET request to update state. 
-- Use good OO design patterns. You should have separate classes for each of your
-  models, and create instance and class methods as necessary. 
-- Routes in your application (both client side and back end) should follow RESTful
-  conventions.
-- Use your back end optimally. Pass JSON for related associations to the front 
-  end from the back end. You should use active record methods in your controller to grab
-  the needed data from your database and provide as JSON to the front end. You
-  should NOT be relying on filtering front end state or a separate fetch request to
-  retrieve related data.
+Install it and run:
 
-For example, build a todo list application with a React frontend interface and a
-Sinatra backend API, where a user can:
+```sh
+bundle install
 
-- **Create** a new todo
-- **Read** a list of all todos
-- **Update** an individual todo
-- **Delete** a todo
+# create migrations with activerecord
+rake db:migrate
 
-A `Todo` can be tagged with a `Category`, so that each todo _belongs to_ a
-category and each category _has many_ todos.
+# if you would like to use seed data
+rake db:seed
 
-## Getting Started
+# start server
+shotgun
 
-### Backend Setup
-
-This repository has all the starter code needed to get a Sinatra backend up and
-running. [**Fork and clone**][fork link] this repository to get started. Then, run
-`bundle install` to install the gems.
-
-**Important**: Be sure you fork a copy of the repo into your GitHub account
-before cloning it. You can do this by using the link above or by clicking the
-"Octocat" button at the top of this page, then clicking "Fork" in the upper
-right corner of the repo page.
-
-[fork link]: https://github.com/learn-co-curriculum/phase-3-sinatra-react-project/fork
-
-The `app/controllers/application_controller.rb` file has an example GET route
-handler. Replace this route with routes for your project.
-
-You can start your server with:
-
-```console
-$ bundle exec rake server
+rake server
 ```
 
-This will run your server on port
-[http://localhost:9292](http://localhost:9292).
+Shotgun uses port 9393 by default.
 
-### Frontend Setup
+## Relationships within Database
 
-Your backend and your frontend should be in **two different repositories**.
+### Projects
 
-Create a new repository in a **separate folder** with a React app for your
-frontend. To do this, `cd` out of the backend project directory, and use
-[create-react-app][] to generate the necessary code for your React frontend:
+- has many boards
+- has many tasks through boards
 
-```console
-$ npx create-react-app my-app-frontend
-```
+### Boards
 
-After creating the project locally, you should also
-[create a repository on GitHub][create repo] to host your repo and help
-collaborate, if you're working with a partner.
+- belongs to a project
+- has many tasks
 
-### Fetch Example
+### Tasks
 
-Your React app should make fetch requests to your Sinatra backend! Here's an
-example:
+- belongs to a board
+- belongs to project though a board
+
+## Example Calls You Can Make With API
+
+### Projects
+
+You can make all CRUD calls for the projects database.
+
+- CREATE projects
+- GET/RETRIEVE all projects
+- GET/RETRIEVE individual project
+- DELETE a project
+- UPDATE a project
+
+#### Example: Retrieve All Projects
+
+Shows you projects and all of the tasks associated with the project
 
 ```js
-fetch("http://localhost:9292/test")
-  .then((r) => r.json())
-  .then((data) => console.log(data));
+
+fetch('http://localhost:9393/projects')
+  .then((res) => res.json())
+  .then((data) => data.projects)
+
+
+// output
+{
+  message: "projects successfully requested",
+  projects: [
+              {
+                id: 1,
+                title: "Client 1",
+                created_at: "2021-09-28T23:50:45.619Z",
+                updated_at: "2021-10-02T14:23:11.091Z",
+                favorite: true,
+                color: "#b2ebf2",
+                tasks: [
+                        {
+                          id: 8,
+                          name: "Banner - Banner - DD994 - 25 Dollars Off 100 FSH 100",
+                          due_date: "2021-09-29",
+                          description: "promo code only\nBanner - Banner - DD994 - 25 Dollars Off 100 FSH 100\nGlobal Disclaimer - Banner - DD994 - 25 Dollars Off 100 FSH 100\nHomepage - Banner - DD994 - 25 Dollars Off 100 FSH 100",
+                          status: "Complete",
+                          priority: "High",
+                          completed: true,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.679Z",
+                          updated_at: "2021-09-28T23:50:45.679Z"
+                        },
+                        {
+                          id: 9,
+                          name: "Banner - DND139 - 25 Off 100 FSH 100",
+                          due_date: "2021-09-29",
+                          description: "promo code only\nGlobal Banner - Banner - DND139 - 25 Off 100 FSH 100\nGlobal Disclaimer - Banner - DND139 - 25 Off 100 FSH 100\nHomepage - Banner - DND139 - 25 Off 100 FSH 100",
+                          status: "In Progress",
+                          priority: "High",
+                          completed: false,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.680Z",
+                          updated_at: "2021-09-28T23:50:45.680Z"
+                        },
+                        {
+                          id: 10,
+                          name: "Promo Code TEST",
+                          due_date: "2021-09-30",
+                          description: "Global Banner - Banner - TEST - In Monetate\nGlobal Disclaimer - Banner - DND142 - 25 Dollars Off 100 FSH 100\nGlobal Disclaimer - Banner - DND141 - 25 Off 100 FSH 100\nGlobal Banner - Banner - TEST - In Monetate",
+                          status: "In Progress",
+                          priority: "High",
+                          completed: false,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.680Z",
+                          updated_at: "2021-09-28T23:50:45.680Z"
+                          },
+                          {
+                            id: 11,
+                            name: "Workspace for Test",
+                            due_date: "2021-09-30",
+                            description: "",
+                            status: "Not Started",
+                            priority: "Low",
+                            completed: false,
+                            board_id: 2,
+                            created_at: "2021-09-28T23:50:45.680Z",
+                            updated_at: "2021-09-28T23:50:45.680Z"
+                          }
+                  ]
+              },
+  ]
+}
 ```
 
-## Project Tips
+#### Example: Retrieve a Specific Project
 
-- This project is intended to focus more on the backend than the frontend, so
-  try and keep the React side of things relatively simple. Focus on working with
-  Active Record and performing CRUD actions. What are some interesting queries you can write? What kinds of questions can you ask of your data?
-- Once you have a project idea, come up with a domain model and decide what
-  relationships exist between the models in your application. Use a tool like
-  [dbdiagram.io][] to help visualize your models.
-- Decide on your API endpoints. What data should they return? What kind of CRUD
-  action should they perform? What data do they need from the client?
-- Use [Postman][postman download] to test your endpoints.
-- Use `binding.pry` to debug your requests on the server. It's very helpful to use a
-  `binding.pry` in your controller within a route to see what `params` are being
-  sent.
-- Use the [Network Tab in the Dev Tools][network tab] in the frontend to debug
-  your requests.
+Shows you all boards and tasks associated with the project
 
-## Resources
+```js
+fetch('http://localhost:9393/projects/1')
+  .then((res) => res.json())
+  .then((data) => data.projects)
 
-- [create-react-app][]
-- [dbdiagram.io][]
-- [Postman][postman download]
 
-[create-react-app]: https://create-react-app.dev/docs/getting-started
-[create repo]: https://docs.github.com/en/get-started/quickstart/create-a-repo
-[dbdiagram.io]: https://dbdiagram.io/
-[postman download]: https://www.postman.com/downloads/
-[network tab]: https://developer.chrome.com/docs/devtools/network/
+// output
+{
+  message: "project successfully requested",
+  project: {
+  id: 1,
+  title: "Client 1",
+  created_at: "2021-09-28T23:50:45.619Z",
+  updated_at: "2021-10-02T14:23:11.091Z",
+  favorite: true,
+  color: "#b2ebf2",
+  boards: [
+            {
+              id: 1,
+              name: "Backlog",
+              created_at: "2021-09-28T23:50:45.645Z",
+              updated_at: "2021-09-28T23:50:45.645Z",
+              project_id: 1,
+              tasks: [ ]
+            },
+            {
+              id: 2,
+              name: "To Do",
+              created_at: "2021-09-28T23:50:45.646Z",
+              updated_at: "2021-09-28T23:50:45.646Z",
+              project_id: 1,
+              tasks: [
+                        {
+                          id: 8,
+                          name: "Banner - Banner - DD994 - 25 Dollars Off 100 FSH 100",
+                          due_date: "2021-09-29",
+                          description: "promo code only\nBanner - Banner - DD994 - 25 Dollars Off 100 FSH 100\nGlobal Disclaimer - Banner - DD994 - 25 Dollars Off 100 FSH 100\nHomepage - Banner - DD994 - 25 Dollars Off 100 FSH 100",
+                          status: "Complete",
+                          priority: "High",
+                          completed: true,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.679Z",
+                          updated_at: "2021-09-28T23:50:45.679Z"
+                        },
+                        {
+                          id: 9,
+                          name: "Banner - DND139 - 25 Off 100 FSH 100",
+                          due_date: "2021-09-29",
+                          description: "promo code only\nGlobal Banner - Banner - DND139 - 25 Off 100 FSH 100\nGlobal Disclaimer - Banner - DND139 - 25 Off 100 FSH 100\nHomepage - Banner - DND139 - 25 Off 100 FSH 100",
+                          status: "In Progress",
+                          priority: "High",
+                          completed: false,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.680Z",
+                          updated_at: "2021-09-28T23:50:45.680Z"
+                        },
+                        {
+                          id: 10,
+                          name: "Promo Code TEST",
+                          due_date: "2021-09-30",
+                          description: "Global Banner - Banner - TEST - In Monetate\nGlobal Disclaimer - Banner - DND142 - 25 Dollars Off 100 FSH 100\nGlobal Disclaimer - Banner - DND141 - 25 Off 100 FSH 100\nGlobal Banner - Banner - TEST - In Monetate",
+                          status: "In Progress",
+                          priority: "High",
+                          completed: false,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.680Z",
+                          updated_at: "2021-09-28T23:50:45.680Z"
+                        },
+                        {
+                          id: 11,
+                          name: "Workspace for Test",
+                          due_date: "2021-09-30",
+                          description: "",
+                          status: "Not Started",
+                          priority: "Low",
+                          completed: false,
+                          board_id: 2,
+                          created_at: "2021-09-28T23:50:45.680Z",
+                          updated_at: "2021-09-28T23:50:45.680Z"
+                        }
+                      ]
+            },
+            {
+              id: 3,
+              name: "Completed",
+              created_at: "2021-09-28T23:50:45.646Z",
+              updated_at: "2021-09-28T23:50:45.646Z",
+              project_id: 1,
+              tasks: [ ]
+            }
+    ]
+  }
+}
+```
+
+### Boards
+
+You can make all CRUD calls for the projects database.
+
+- CREATE boards
+- GET/RETRIEVE all boards
+- DELETE a board
+- UPDATE a board
+
+### Example: Create a Board
+
+```js
+fetch('http://localhost:9393/boards/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    accept: 'application/json',
+  },
+  body: JSON.stringify({
+    name: 'New Board',
+    project_id: 1, #mandatory to make a new board
+  }),
+})
+
+// output
+{
+  "message": "board successfully created",
+  "board": {
+      "id": 10,
+      "name": "New Board",
+      "created_at": "2021-10-02T15:11:11.647Z",
+      "updated_at": "2021-10-02T15:11:11.647Z",
+      "project_id": 1
+  }
+}
+```
+
+### Tasks
+
+You can make all CRUD calls for the projects database.
+
+- CREATE tasks
+- GET/RETRIEVE all tasks
+- DELETE a task
+- UPDATE a task
+
+### Example: Delete a Task
+
+```js
+fetch(`http://localhost:9393/tasks/11`, {
+      method: 'DELETE',
+})
+
+// output
+{
+  "message": "task successfully deleted",
+  "task": {
+      "id": 11,
+      "name": "Workspace for Test",
+      "due_date": "2021-09-30",
+      "description": "",
+      "status": "Not Started",
+      "priority": "Low",
+      "completed": false,
+      "board_id": 2,
+      "created_at": "2021-09-28T23:50:45.680Z",
+      "updated_at": "2021-09-28T23:50:45.680Z"
+  }
+}
+```
