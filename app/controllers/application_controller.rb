@@ -1,5 +1,26 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
+
+  use Rack::Session::Cookie, :expire_after => 259200000000
+  
+  # To enable cross origin requests for all routes:
+  set :bind, '0.0.0.0'
+  configure do
+    enable :cross_origin
+  end
+  before do
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+  end
+  
+  # routes...
+  options "*" do
+    response.headers["Allow"] = "GET, PUT, POST, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, X-User-Email, X-Auth-Token"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    200
+  end
   
   # Add your routes here
   get "/" do
@@ -7,36 +28,200 @@ class ApplicationController < Sinatra::Base
   end
   
   # GET projects
+  get "/projects" do
+    project = Project.all
+    project.to_json
+  end
   get "/projects/" do
     project = Project.all
     project.to_json
   end
   get "/projects/:id" do
     project = Project.find(params[:id])
-    project.to_json(only: [:title, :color, :created_at, :updated_at])
+    project.to_json(
+      only: [
+              :title, 
+              :color, 
+              :created_at, 
+              :updated_at]
+      )
   end
 
   # GET tasks
-  # get "/tasks" do
-  #   task = Task.all
-  #   task.to_json
-  # end
-  get "/tasks" || "tasks/" do
+  get "/tasks" do
     task = Task.all
     task.to_json
   end
-  get "/tasks" do
+  get "/tasks/" do
+    task = Task.all
+    task.to_json
+  end
+  get "/tasks/:id" do
     task = Task.find(params[:id])
-    task.to_json(only: [:name, :due_date, :description, :status, :priority, :completed, :board_id, :created_at, :updated_at])
+    task.to_json(
+      only: [
+        :name, 
+        :due_date, 
+        :description, 
+        :status, 
+        :priority, 
+        :completed, 
+        :board_id, 
+        :created_at, 
+        :updated_at
+      ]
+    )
   end
 
+  # GET boards
   get "/boards" do
     board = Board.all
+    board.to_json
+  end
+  get "/boards/" do
+    board = Board.all
+    board.to_json
+  end
+  get "/boards/:id" do
+    task = Task.find(params[:id])
+    task.to_json(only: [
+      :name, 
+      :due_date, 
+      :description, 
+      :status, 
+      :priority, 
+      :completed, 
+      :board_id, 
+      :created_at, 
+      :updated_at
+    ]
+  )
+  end
+
+  #POST projects
+  post '/projects' do
+    project = Project.create(
+      title:params[:title], 
+      color:params[:color], 
+      favorite:params[:favorite]
+    )
+    project.to_json
+  end
+  post '/projects/' do
+    project = Project.create(
+      title:params[:title], 
+      color:params[:color], 
+      favorite:params[:favorite]
+    )
+    project.to_json
+  end
+
+  #POST tasks
+  post '/tasks' do
+    task = Task.create(
+      name:params[:name], 
+      due_date:params[:due_date], 
+      description:params[:description], 
+      status:params[:params], 
+      priority:params[:priority], 
+      completed:params[:completed], 
+      board_id:params[:board_id]
+    )
+    task.to_json
+  end
+  post '/tasks/' do
+    task = Task.create(
+      name:params[:name], 
+      due_date:params[:due_date], 
+      description:params[:description], 
+      status:params[:params], 
+      priority:params[:priority], 
+      completed:params[:completed], 
+      board_id:params[:board_id]
+    )
+    task.to_json
+  end
+  #POST boards
+  post '/boards' do
+    board = Board.create(
+      name:params[:name], 
+      project_id:params[:project_id]
+    )
+    board.to_json
+  end
+  post '/boards/' do
+    board = Board.create(
+      name:params[:name], 
+      project_id:params[:project_id]
+    )
+    board.to_json
+  end
+
+  # PATCH boards
+  patch '/projects/:id' do
+    project = Project.find(params[:id])
+    project.update(
+      title: params[:title],
+      color: params[:color],
+      favorite: params[:favorite],
+    )
+  end
+
+  # PATCH tasks
+  patch '/tasks/:id' do
+    task = Task.find(params[:id])
+    task.update(
+      name: params[:name],
+      project_id: params[:project_id]
+    )
+  end
+
+  #PATCH boards
+  patch '/boards/:id' do
+    board = Board.find(params[:id])
+    board.update(
+      name: params[:name],
+      due_date: params[:due_date],
+      description: params[:description],
+      status: params[:status],
+      completed: params[:completed],
+      board_id: params[:board_id]
+    )
+  end
+
+  #DELETE projects
+  delete '/projects/:id' do
+    project = Project.find(params[:id])
+    project.destroy
+    project.to_json
+  end
+
+  #DELETE tasks
+  delete '/tasks/:id' do
+    task = Task.find(params[:id])
+    task.destroy
+    task.to_json
+  end
+
+  #DELETE boards
+  delete '/boards/:id' do
+    board = Board.find(params[:id])
+    board.destroy
     board.to_json
   end
 
 
 
+
+
+
+
+
+
+
+
+
+  
   # def call(env)
   #   resp = Rack::Response.new
   #   req = Rack::Request.new(env)
